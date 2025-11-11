@@ -73,7 +73,15 @@
           "description": "状态栏是否显示2位简称"
         }
       }
-    }
+    },
+    "keybindings": [
+      {
+        "command": "watch-stock.toggleVisibility",
+        "key": "ctrl+alt+s",
+        "mac": "cmd+alt+s",
+        "when": "editorTextFocus || !editorTextFocus"
+      }
+    ]
   },
   "dependencies": {
     "axios": "^1.6.0",
