@@ -4,7 +4,7 @@
  */
 
 const vscode = require("vscode");
-const { getStocks } = require("../config");
+const { getStocks, getIndices, getSectors } = require("../config");
 const { getStocksInfo } = require("../services/stockService");
 
 class IndexViewProvider {
@@ -46,10 +46,17 @@ class IndexViewProvider {
 
   async refresh() {
     try {
+      // 从配置获取指数代码
+      const indexCodes = getIndices();
+      // 从配置获取板块代码
+      const sectorCodes = getSectors();
+      // 获取用户自选股票
+      const userStocks = getStocks();
+
       const [indexData, sectorData, userData] = await Promise.all([
-        getStocksInfo(["sh000001", "sz399001", "sz399006"]),
-        getStocksInfo(["sh512760", "sh512690", "sh512170", "sh515790"]),
-        getStocksInfo(await getStocks()),
+        getStocksInfo(indexCodes),
+        getStocksInfo(sectorCodes),
+        getStocksInfo(userStocks),
       ]);
 
       const sortByChange = (a, b) =>

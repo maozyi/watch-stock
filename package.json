@@ -2,7 +2,7 @@
   "name": "watch-stock",
   "displayName": "摸鱼看盘",
   "icon": "images/logo.jpg",
-  "description": "极简股票查看插件，状态栏显示股票信息",
+  "description": "极简股票查看插件，编码的同时轻松掌握股市动态",
   "version": "1.2.0",
   "publisher": "pbstar",
   "engines": {
@@ -38,15 +38,15 @@
     "commands": [
       {
         "command": "watch-stock.addStock",
-        "title": "添加股票"
+        "title": "添加自选股票"
       },
       {
         "command": "watch-stock.removeStock",
-        "title": "移除股票"
+        "title": "移除自选股票"
       },
       {
         "command": "watch-stock.clearStocks",
-        "title": "清空股票"
+        "title": "清空自选股票"
       },
       {
         "command": "watch-stock.manageStock",
@@ -58,7 +58,7 @@
       },
       {
         "command": "watch-stock.refreshData",
-        "title": "刷新股票数据"
+        "title": "刷新行情数据"
       },
       {
         "command": "watch-stock.indexViewAction",
@@ -74,7 +74,32 @@
           "default": [
             "sh000001"
           ],
-          "description": "股票代码列表",
+          "description": "自选股票代码列表",
+          "items": {
+            "type": "string"
+          }
+        },
+        "watch-stock.indices": {
+          "type": "array",
+          "default": [
+            "sh000001",
+            "sz399001",
+            "sz399006"
+          ],
+          "description": "指数代码列表",
+          "items": {
+            "type": "string"
+          }
+        },
+        "watch-stock.sectors": {
+          "type": "array",
+          "default": [
+            "sh512760",
+            "sh512690",
+            "sh512170",
+            "sh515790"
+          ],
+          "description": "板块代码列表",
           "items": {
             "type": "string"
           }

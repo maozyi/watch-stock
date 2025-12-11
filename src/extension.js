@@ -39,10 +39,10 @@ function activate(context) {
     treeDataProvider: indexViewProvider,
   });
 
-  // 监听视图可见性变化
+  // 监听股票看板可见性变化
   treeView.onDidChangeVisibility((event) => {
     indexViewProvider.setShowPage(event.visible);
-    console.log(`股票指数视图可见性: ${event.visible ? "显示" : "隐藏"}`);
+    console.log(`股票看板可见性: ${event.visible ? "显示" : "隐藏"}`);
   });
 
   context.subscriptions.push(treeView);
@@ -97,18 +97,18 @@ function registerCommands(context) {
   const manageStockCommand = vscode.commands.registerCommand(
     "watch-stock.manageStock",
     async () => {
-      const stocks = await getStocks();
+      const stocks = getStocks();
       const isVisible = statusBarManager.getIsVisible();
 
       const options = [
         {
-          label: "$(add) 添加股票",
-          description: "输入股票代码或名称添加新股票",
+          label: "$(add) 添加自选股票",
+          description: "输入股票代码或名称添加新的自选股票",
           action: "add",
         },
         {
-          label: "$(remove) 移除股票",
-          description: "从已添加的股票中选择移除",
+          label: "$(remove) 移除自选股票",
+          description: "从已添加的自选股票中选择移除",
           action: "remove",
         },
       ];
@@ -116,8 +116,8 @@ function registerCommands(context) {
       // 如果已有股票，添加更多选项
       if (stocks.length > 0) {
         options.push({
-          label: "$(trash) 清空股票",
-          description: "清空所有已添加的股票",
+          label: "$(trash) 清空自选股票",
+          description: "清空所有已添加的自选股票",
           action: "clear",
         });
       }
@@ -132,8 +132,8 @@ function registerCommands(context) {
           action: "toggle",
         },
         {
-          label: "$(refresh) 刷新股票数据",
-          description: "立即刷新股票数据",
+          label: "$(refresh) 刷新行情数据",
+          description: "手动刷新股票行情数据",
           action: "refresh",
         }
       );
@@ -177,21 +177,9 @@ function registerCommands(context) {
   const refreshDataCommand = vscode.commands.registerCommand(
     "watch-stock.refreshData",
     async () => {
-      if (!statusBarManager.getIsVisible()) {
-        vscode.window.showWarningMessage(
-          "股票信息已隐藏，请先显示股票信息后再刷新"
-        );
-        return;
-      }
-
-      const stocks = await getStocks();
-      if (stocks.length === 0) {
-        vscode.window.showInformationMessage("当前没有添加任何股票");
-        return;
-      }
-
       await statusBarManager.updateStockInfo();
-      vscode.window.showInformationMessage("股票数据刷新完成");
+      await indexViewProvider.updateData();
+      vscode.window.showInformationMessage("股票行情数据刷新完成");
     }
   );
 

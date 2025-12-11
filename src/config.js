@@ -6,6 +6,8 @@ const vscode = require("vscode");
 
 const CONFIG_SECTION = "watch-stock";
 const DEFAULT_STOCKS = ["sh000001"]; // 默认值：上证指数
+const DEFAULT_INDICES = ["sh000001", "sz399001", "sz399006"]; // 默认指数：上证、深成、创业板
+const DEFAULT_SECTORS = ["sh512760", "sh512690", "sh512170", "sh515790"]; // 默认板块：半导体、酒、医疗、光伏
 
 /**
  * 获取配置对象
@@ -28,7 +30,7 @@ function isValidStockCode(code) {
  * 如果数据格式有问题，直接重置为默认值
  * @returns {Promise<string[]>} 股票代码数组
  */
-async function getStocks() {
+function getStocks() {
   const config = getConfig();
   const stocks = config.get("stocks", DEFAULT_STOCKS);
 
@@ -37,11 +39,7 @@ async function getStocks() {
 
   // 如果数据有问题（没有有效代码或格式不对），重置为默认值
   if (validStocks.length === 0 || validStocks.length !== stocks.length) {
-    await config.update(
-      "stocks",
-      DEFAULT_STOCKS,
-      vscode.ConfigurationTarget.Global
-    );
+    config.update("stocks", DEFAULT_STOCKS, vscode.ConfigurationTarget.Global);
     return DEFAULT_STOCKS;
   }
 
@@ -93,10 +91,30 @@ function getShowTwoLetterCode() {
   return config.get("showTwoLetterCode", false);
 }
 
+/**
+ * 获取指数代码列表
+ * @returns {string[]} 指数代码数组
+ */
+function getIndices() {
+  const config = getConfig();
+  return config.get("indices", DEFAULT_INDICES);
+}
+
+/**
+ * 获取板块代码列表
+ * @returns {string[]} 板块代码数组
+ */
+function getSectors() {
+  const config = getConfig();
+  return config.get("sectors", DEFAULT_SECTORS);
+}
+
 module.exports = {
   getStocks,
   saveStocks,
   getRefreshInterval,
   getMaxDisplayCount,
   getShowTwoLetterCode,
+  getIndices,
+  getSectors,
 };

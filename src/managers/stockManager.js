@@ -67,7 +67,7 @@ class StockManager {
     }
 
     // 检查是否已存在
-    const stocks = await getStocks();
+    const stocks = getStocks();
     if (stocks.includes(stockCode.toLowerCase())) {
       vscode.window.showWarningMessage("该股票已存在");
       return;
@@ -91,7 +91,7 @@ class StockManager {
    * @param {Function} onUpdate - 更新回调函数
    */
   async removeStock(onUpdate) {
-    const stocks = await getStocks();
+    const stocks = getStocks();
     if (stocks.length === 0) {
       vscode.window.showInformationMessage("当前没有添加任何股票");
       return;
@@ -138,20 +138,20 @@ class StockManager {
    * @param {Function} onUpdate - 更新回调函数
    */
   async clearStocks(onUpdate) {
-    const stocks = await getStocks();
+    const stocks = getStocks();
     if (stocks.length === 0) {
       return;
     }
 
     const confirm = await vscode.window.showWarningMessage(
-      "确定要清空所有股票吗？",
+      "确定要清空所有自选股票吗？",
       "确定",
       "取消"
     );
 
     if (confirm === "确定") {
       await saveStocks([]);
-      vscode.window.showInformationMessage("已清空所有股票");
+      vscode.window.showInformationMessage("已清空所有自选股票");
 
       // 触发更新
       if (onUpdate) {
