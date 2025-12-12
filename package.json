@@ -2,8 +2,8 @@
   "name": "watch-stock",
   "displayName": "摸鱼看盘",
   "icon": "images/logo.jpg",
-  "description": "极简股票查看插件，状态栏显示股票信息",
-  "version": "1.1.0",
+  "description": "极简股票查看插件，编码的同时轻松掌握股市动态",
+  "version": "1.2.0",
   "publisher": "pbstar",
   "engines": {
     "vscode": "^1.74.0"
@@ -17,18 +17,36 @@
   ],
   "main": "./src/extension.js",
   "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "watchStock",
+          "title": "摸鱼看盘",
+          "icon": "$(graph)"
+        }
+      ]
+    },
+    "views": {
+      "watchStock": [
+        {
+          "id": "watchStockIndex",
+          "name": "股票看板",
+          "icon": "$(graph)"
+        }
+      ]
+    },
     "commands": [
       {
         "command": "watch-stock.addStock",
-        "title": "添加股票"
+        "title": "添加自选股票"
       },
       {
         "command": "watch-stock.removeStock",
-        "title": "移除股票"
+        "title": "移除自选股票"
       },
       {
         "command": "watch-stock.clearStocks",
-        "title": "清空股票"
+        "title": "清空自选股票"
       },
       {
         "command": "watch-stock.manageStock",
@@ -40,7 +58,12 @@
       },
       {
         "command": "watch-stock.refreshData",
-        "title": "刷新股票数据"
+        "title": "刷新行情数据"
+      },
+      {
+        "command": "watch-stock.indexViewAction",
+        "title": "管理股票",
+        "icon": "$(gear)"
       }
     ],
     "configuration": {
@@ -51,7 +74,52 @@
           "default": [
             "sh000001"
           ],
-          "description": "股票代码列表",
+          "description": "自选股票代码列表",
+          "items": {
+            "type": "string"
+          }
+        },
+        "watch-stock.indices": {
+          "type": "array",
+          "default": [
+            "sh000001",
+            "sz399001",
+            "sz399006",
+            "sh588000",
+            "bj899050"
+          ],
+          "description": "指数代码列表(在股票看板中显示)",
+          "items": {
+            "type": "string"
+          }
+        },
+        "watch-stock.sectors": {
+          "type": "array",
+          "default": [
+            "sh515880",
+            "sh512690",
+            "sh562500",
+            "sz159206",
+            "sh512880",
+            "sh512480",
+            "sz159755",
+            "sh515220",
+            "sh512400",
+            "sz159227",
+            "sz159995",
+            "sz159857",
+            "sh515120",
+            "sz159869",
+            "sh512170",
+            "sh517520",
+            "sh512660",
+            "sz159852",
+            "sh512800",
+            "sz159766",
+            "sh512980",
+            "sz159825"
+          ],
+          "description": "板块代码列表(在股票看板中显示)",
           "items": {
             "type": "string"
           }
@@ -65,7 +133,7 @@
         "watch-stock.maxDisplayCount": {
           "type": "number",
           "default": 5,
-          "description": "最大显示股票数量"
+          "description": "状态栏最大显示股票数量"
         },
         "watch-stock.showTwoLetterCode": {
           "type": "boolean",
@@ -81,12 +149,18 @@
         "mac": "cmd+alt+s",
         "when": "editorTextFocus || !editorTextFocus"
       }
-    ]
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "watch-stock.indexViewAction",
+          "when": "view == watchStockIndex",
+          "group": "navigation"
+        }
+      ]
+    }
   },
-  "dependencies": {
-    "axios": "^1.6.0",
-    "iconv-lite": "^0.6.3"
-  },
+  "dependencies": {},
   "keywords": [
     "摸鱼看盘",
     "stock",

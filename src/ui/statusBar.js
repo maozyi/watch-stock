@@ -8,7 +8,7 @@ const {
   getMaxDisplayCount,
   getShowTwoLetterCode,
 } = require("../config");
-const { getStocksInfo } = require("../services/stockService");
+const { getStockList } = require("../services/stockService");
 
 class StatusBarManager {
   constructor() {
@@ -36,17 +36,17 @@ class StatusBarManager {
       return;
     }
 
-    const stocks = await getStocks();
+    const stocks = getStocks();
 
     // 无股票时的提示
     if (stocks.length === 0) {
-      this.statusBarItem.text = "$(add) 点击添加股票";
+      this.statusBarItem.text = "$(add) 点击添加自选股票";
       this.statusBarItem.tooltip = "点击管理股票，开始您的看盘之旅";
       return;
     }
 
     // 批量获取股票信息
-    const stockInfos = await getStocksInfo(stocks);
+    const stockInfos = await getStockList(stocks);
 
     // 无有效数据时的处理
     if (stockInfos.length === 0) {

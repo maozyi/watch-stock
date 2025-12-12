@@ -4,9 +4,9 @@
  */
 
 const vscode = require("vscode");
-const { normalizeStockCode } = require("../utils/stockCode");
+const { isValidStockCode } = require("../utils/stockCode");
 const { searchStockCode } = require("../services/stockSearch");
-const { getStockInfo, getStocksInfo } = require("../services/stockService");
+const { getStockList } = require("../services/stockService");
 const { getStocks, saveStocks } = require("../config");
 
 class StockManager {
@@ -18,6 +18,15 @@ class StockManager {
     const input = await vscode.window.showInputBox({
       prompt: "请输入股票代码或名称",
       placeHolder: "例如: sh600519 或 sz000001 或 贵州茅台",
+      validateInput: (value) => {
+        if (!value || value.trim().length === 0) {
+          return "请输入有效的股票代码或名称";
+        }
+        if (value.trim().length > 20) {
+          return "输入内容过长，请重新输入";
+        }
+        return null;
+      },
     });
 
     if (!input || !input.trim()) {
@@ -25,13 +34,12 @@ class StockManager {
     }
 
     const stockInput = input.trim();
-    let stockCode = null;
+    let stockCode = stockInput;
 
-    // 先尝试标准化代码
-    stockCode = normalizeStockCode(stockInput);
+    const isCode = isValidStockCode(stockInput);
 
     // 如果不是标准代码格式，则尝试搜索
-    if (!stockCode) {
+    if (!isCode) {
       stockCode = await searchStockCode(stockInput);
     }
 
@@ -50,17 +58,17 @@ class StockManager {
       return;
     }
 
-    // 验证股票是否存在
-    const stockInfo = await getStockInfo(stockCode);
-    if (!stockInfo || !stockInfo.name) {
-      vscode.window.showErrorMessage("股票获取失败，请检查股票代码或名称");
+    // 检查是否已存在
+    const stocks = getStocks();
+    if (stocks.includes(stockCode.toLowerCase())) {
+      vscode.window.showWarningMessage("该股票已存在");
       return;
     }
 
-    // 检查是否已存在
-    const stocks = await getStocks();
-    if (stocks.includes(stockCode.toLowerCase())) {
-      vscode.window.showWarningMessage("该股票已存在");
+    // 验证股票是否存在
+    const stockInfo = await getStockList([stockCode]);
+    if (!stockInfo || !stockInfo[0].name) {
+      vscode.window.showErrorMessage("股票获取失败，请检查股票代码或名称");
       return;
     }
 
@@ -82,14 +90,14 @@ class StockManager {
    * @param {Function} onUpdate - 更新回调函数
    */
   async removeStock(onUpdate) {
-    const stocks = await getStocks();
+    const stocks = getStocks();
     if (stocks.length === 0) {
       vscode.window.showInformationMessage("当前没有添加任何股票");
       return;
     }
 
     // 获取股票名称用于显示
-    const stockInfos = await getStocksInfo(stocks);
+    const stockInfos = await getStockList(stocks);
 
     // 创建代码到信息的映射
     const infoMap = new Map();
@@ -129,20 +137,20 @@ class StockManager {
    * @param {Function} onUpdate - 更新回调函数
    */
   async clearStocks(onUpdate) {
-    const stocks = await getStocks();
+    const stocks = getStocks();
     if (stocks.length === 0) {
       return;
     }
 
     const confirm = await vscode.window.showWarningMessage(
-      "确定要清空所有股票吗？",
+      "确定要清空所有自选股票吗？",
       "确定",
       "取消"
     );
 
     if (confirm === "确定") {
       await saveStocks([]);
-      vscode.window.showInformationMessage("已清空所有股票");
+      vscode.window.showInformationMessage("已清空所有自选股票");
 
       // 触发更新
       if (onUpdate) {

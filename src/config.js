@@ -3,9 +3,9 @@
  */
 
 const vscode = require("vscode");
+const { isValidStockCode } = require("./utils/stockCode");
 
 const CONFIG_SECTION = "watch-stock";
-const DEFAULT_STOCKS = ["sh000001"]; // 默认值：上证指数
 
 /**
  * 获取配置对象
@@ -15,55 +15,24 @@ function getConfig() {
 }
 
 /**
- * 验证股票代码格式
- * @param {string} code - 股票代码
- * @returns {boolean} 是否为有效格式
+ * 获取并验证代码列表的通用函数
+ * @param {string} configKey - 配置项键名
+ * @param {string[]} defaultValue - 默认值
+ * @returns {string[]} 验证后的代码数组
  */
-function isValidStockCode(code) {
-  return code && typeof code === "string" && /^(sh|sz|bj)[0-9]{6}$/i.test(code);
-}
-
-/**
- * 获取股票代码列表
- * 如果数据格式有问题，直接重置为默认值
- * @returns {Promise<string[]>} 股票代码数组
- */
-async function getStocks() {
+function getValidatedCodes(configKey) {
   const config = getConfig();
-  const stocks = config.get("stocks", DEFAULT_STOCKS);
+  const codes = config.get(configKey, []);
 
   // 验证所有代码格式
-  const validStocks = stocks.filter((code) => isValidStockCode(code));
+  const validCodes = codes.filter((code) => isValidStockCode(code));
 
-  // 如果数据有问题（没有有效代码或格式不对），重置为默认值
-  if (validStocks.length === 0 || validStocks.length !== stocks.length) {
-    await config.update(
-      "stocks",
-      DEFAULT_STOCKS,
-      vscode.ConfigurationTarget.Global
-    );
-    return DEFAULT_STOCKS;
+  // 如果有无效代码,更新配置
+  if (validCodes.length !== codes.length) {
+    config.update(configKey, validCodes, vscode.ConfigurationTarget.Global);
   }
 
-  // 统一转换为小写
-  return validStocks.map((code) => code.toLowerCase());
-}
-
-/**
- * 保存股票代码列表
- * @param {string[]} stocks - 股票代码数组
- */
-async function saveStocks(stocks) {
-  const config = getConfig();
-  // 确保所有代码都是标准格式
-  const normalizedStocks = stocks
-    .map((code) => code.toLowerCase())
-    .filter((code) => /^(sh|sz|bj)[0-9]{6}$/.test(code));
-  await config.update(
-    "stocks",
-    normalizedStocks,
-    vscode.ConfigurationTarget.Global
-  );
+  return validCodes;
 }
 
 /**
@@ -93,10 +62,45 @@ function getShowTwoLetterCode() {
   return config.get("showTwoLetterCode", false);
 }
 
+/**
+ * 获取指数代码列表
+ * @returns {string[]} 指数代码数组
+ */
+function getIndices() {
+  return getValidatedCodes("indices");
+}
+
+/**
+ * 获取板块代码列表
+ * @returns {string[]} 板块代码数组
+ */
+function getSectors() {
+  return getValidatedCodes("sectors");
+}
+
+/**
+ * 获取股票代码列表
+ * @returns {string[]} 股票代码数组
+ */
+function getStocks() {
+  return getValidatedCodes("stocks");
+}
+
+/**
+ * 保存股票代码列表
+ * @param {string[]} stocks - 股票代码数组
+ */
+async function saveStocks(stocks) {
+  const config = getConfig();
+  await config.update("stocks", stocks, vscode.ConfigurationTarget.Global);
+}
+
 module.exports = {
   getStocks,
   saveStocks,
   getRefreshInterval,
   getMaxDisplayCount,
   getShowTwoLetterCode,
+  getIndices,
+  getSectors,
 };

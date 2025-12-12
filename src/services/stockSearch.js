@@ -3,8 +3,8 @@
  * 根据股票名称搜索股票代码
  */
 
-const axios = require("axios");
-const iconv = require("iconv-lite");
+const { httpGet } = require("../utils/httpClient");
+const { simpleDecode } = require("../utils/encoding");
 
 /**
  * 根据股票名称搜索股票代码
@@ -22,18 +22,10 @@ async function searchStockCode(keyword) {
   }
 
   try {
-    // 方法1：使用新浪搜索API
     const code = await searchBySina(trimmed);
     if (code) {
       return code;
     }
-
-    // 方法2：使用腾讯股票搜索API作为备选
-    const tencentCode = await searchByTencent(trimmed);
-    if (tencentCode) {
-      return tencentCode;
-    }
-
     return null;
   } catch (error) {
     console.error("股票搜索失败:", error.message);
@@ -48,7 +40,7 @@ async function searchStockCode(keyword) {
  */
 async function searchBySina(keyword) {
   try {
-    const searchResponse = await axios.get(
+    const searchResponse = await httpGet(
       `https://suggest3.sinajs.cn/suggest/type=11,12,13,14,15,21,22,23,24,25,31,32,33,34,35&key=${encodeURIComponent(
         keyword
       )}`,
@@ -63,7 +55,7 @@ async function searchBySina(keyword) {
       }
     );
 
-    const searchData = iconv.decode(Buffer.from(searchResponse.data), "gbk");
+    const searchData = simpleDecode(searchResponse.data);
 
     // 解析搜索结果
     const match = searchData.match(/var suggestvalue="([^"]+)"/);
@@ -92,44 +84,6 @@ async function searchBySina(keyword) {
     }
   } catch (error) {
     console.error("新浪搜索失败:", error.message);
-  }
-
-  return null;
-}
-
-/**
- * 使用腾讯API搜索股票
- * @param {string} keyword - 搜索关键词
- * @returns {Promise<string|null>} 股票代码
- */
-async function searchByTencent(keyword) {
-  try {
-    const tencentResponse = await axios.get(
-      `https://smartbox.gtimg.cn/s3/?q=${encodeURIComponent(keyword)}&t=all`,
-      {
-        timeout: 5000,
-        headers: {
-          "User-Agent":
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-        },
-      }
-    );
-
-    const tencentData = tencentResponse.data;
-
-    // 腾讯API返回格式：v_hint="中国平安,sh601318,中国平安保险(集团)股份有限公司"
-    const tencentMatch = tencentData.match(/v_hint="([^"]+)"/);
-    if (tencentMatch && tencentMatch[1]) {
-      const parts = tencentMatch[1].split(",");
-      if (parts.length >= 2) {
-        const fullCode = parts[1];
-        if (fullCode.match(/^(sh|sz)[0-9]{6}$/i)) {
-          return fullCode.toLowerCase();
-        }
-      }
-    }
-  } catch (error) {
-    console.error("腾讯搜索失败:", error.message);
   }
 
   return null;
