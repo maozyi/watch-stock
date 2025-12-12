@@ -26,25 +26,34 @@ function isValidStockCode(code) {
 }
 
 /**
- * 获取股票代码列表
- * 如果数据格式有问题，直接重置为默认值
- * @returns {Promise<string[]>} 股票代码数组
+ * 获取并验证代码列表的通用函数
+ * @param {string} configKey - 配置项键名
+ * @param {string[]} defaultValue - 默认值
+ * @returns {string[]} 验证后的代码数组
  */
-function getStocks() {
+function getValidatedCodes(configKey, defaultValue) {
   const config = getConfig();
-  const stocks = config.get("stocks", DEFAULT_STOCKS);
+  const codes = config.get(configKey, defaultValue);
 
   // 验证所有代码格式
-  const validStocks = stocks.filter((code) => isValidStockCode(code));
+  const validCodes = codes.filter((code) => isValidStockCode(code));
 
-  // 如果数据有问题（没有有效代码或格式不对），重置为默认值
-  if (validStocks.length === 0 || validStocks.length !== stocks.length) {
-    config.update("stocks", DEFAULT_STOCKS, vscode.ConfigurationTarget.Global);
-    return DEFAULT_STOCKS;
+  // 如果数据有问题,重置为默认值
+  if (validCodes.length === 0 || validCodes.length !== codes.length) {
+    config.update(configKey, defaultValue, vscode.ConfigurationTarget.Global);
+    return defaultValue;
   }
 
   // 统一转换为小写
-  return validStocks.map((code) => code.toLowerCase());
+  return validCodes.map((code) => code.toLowerCase());
+}
+
+/**
+ * 获取股票代码列表
+ * @returns {string[]} 股票代码数组
+ */
+function getStocks() {
+  return getValidatedCodes("stocks", DEFAULT_STOCKS);
 }
 
 /**
@@ -56,7 +65,7 @@ async function saveStocks(stocks) {
   // 确保所有代码都是标准格式
   const normalizedStocks = stocks
     .map((code) => code.toLowerCase())
-    .filter((code) => /^(sh|sz|bj)[0-9]{6}$/.test(code));
+    .filter((code) => isValidStockCode(code));
   await config.update(
     "stocks",
     normalizedStocks,
@@ -96,8 +105,7 @@ function getShowTwoLetterCode() {
  * @returns {string[]} 指数代码数组
  */
 function getIndices() {
-  const config = getConfig();
-  return config.get("indices", DEFAULT_INDICES);
+  return getValidatedCodes("indices", DEFAULT_INDICES);
 }
 
 /**
@@ -105,8 +113,7 @@ function getIndices() {
  * @returns {string[]} 板块代码数组
  */
 function getSectors() {
-  const config = getConfig();
-  return config.get("sectors", DEFAULT_SECTORS);
+  return getValidatedCodes("sectors", DEFAULT_SECTORS);
 }
 
 module.exports = {

@@ -86,7 +86,7 @@
             "sz399001",
             "sz399006"
           ],
-          "description": "指数代码列表",
+          "description": "指数代码列表(在股票看板中显示)",
           "items": {
             "type": "string"
           }
@@ -99,7 +99,7 @@
             "sh512170",
             "sh515790"
           ],
-          "description": "板块代码列表",
+          "description": "板块代码列表(在股票看板中显示)",
           "items": {
             "type": "string"
           }
