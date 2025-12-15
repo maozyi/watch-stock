@@ -1,13 +1,5 @@
 /**
  * 摸鱼看盘 - VS Code股票实时查看插件
- *
- * 功能特点：
- * - 实时显示股票价格信息
- * - 支持股票代码和中文名称搜索
- * - 状态栏显示，不影响编码
- * - 可管理多只股票
- * - 定时自动刷新数据
- * - 批量查询优化，一次请求获取多只股票数据
  */
 
 const vscode = require("vscode");
@@ -60,7 +52,7 @@ function activate(context) {
   const configChangeListener = vscode.workspace.onDidChangeConfiguration(
     (e) => {
       // 刷新股票数据
-      statusBarManager.updateStockInfo();
+      statusBarManager.updateData();
       indexProvider.updateData();
       if (e.affectsConfiguration("watch-stock.refreshInterval")) {
         startRefreshTimer();
@@ -72,7 +64,7 @@ function activate(context) {
   // 开始定时更新
   startRefreshTimer();
   // 初始化时先刷新一次数据
-  statusBarManager.updateStockInfo();
+  statusBarManager.updateData();
   indexProvider.updateData();
 }
 
@@ -85,7 +77,7 @@ function registerCommands(context) {
     "watch-stock.addStock",
     () =>
       stockManager.addStock(() => {
-        statusBarManager.updateStockInfo();
+        statusBarManager.updateData();
         indexProvider.updateData();
       })
   );
@@ -93,13 +85,21 @@ function registerCommands(context) {
   // 移除自选股票
   const removeStockCommand = vscode.commands.registerCommand(
     "watch-stock.removeStock",
-    () => stockManager.removeStock(() => statusBarManager.updateStockInfo())
+    () =>
+      stockManager.removeStock(() => {
+        statusBarManager.updateData();
+        indexProvider.updateData();
+      })
   );
 
   // 清空自选股票
   const clearStocksCommand = vscode.commands.registerCommand(
     "watch-stock.clearStocks",
-    () => stockManager.clearStocks(() => statusBarManager.updateStockInfo())
+    () =>
+      stockManager.clearStocks(() => {
+        statusBarManager.updateData();
+        indexProvider.updateData();
+      })
   );
 
   // 管理股票（主菜单）
@@ -186,7 +186,7 @@ function registerCommands(context) {
   const refreshDataCommand = vscode.commands.registerCommand(
     "watch-stock.refreshData",
     async () => {
-      await statusBarManager.updateStockInfo();
+      await statusBarManager.updateData();
       await indexProvider.updateData();
       vscode.window.showInformationMessage("股票行情数据刷新完成");
     }
@@ -219,7 +219,7 @@ function startRefreshTimer() {
   refreshInterval = setInterval(() => {
     if (isTradingTime()) {
       // 同时更新状态栏和指数视图
-      statusBarManager.updateStockInfo();
+      statusBarManager.updateData();
       indexProvider.updateData();
     } else {
       console.log("当前非交易时间，跳过刷新");
@@ -237,6 +237,9 @@ function deactivate() {
   }
   if (statusBarManager) {
     statusBarManager.dispose();
+  }
+  if (indexProvider) {
+    indexProvider.dispose();
   }
 }
 

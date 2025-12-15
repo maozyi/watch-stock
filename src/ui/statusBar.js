@@ -31,7 +31,7 @@ class StatusBarManager {
   /**
    * 更新股票信息显示
    */
-  async updateStockInfo() {
+  async updateData() {
     if (!this.isVisible || !this.statusBarItem) {
       return;
     }
@@ -104,7 +104,7 @@ class StatusBarManager {
   toggleVisibility() {
     this.isVisible = !this.isVisible;
     if (this.isVisible) {
-      this.updateStockInfo();
+      this.updateData();
     } else {
       if (this.statusBarItem) {
         this.statusBarItem.text = "$(eye-closed)";
