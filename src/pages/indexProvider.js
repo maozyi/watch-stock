@@ -53,19 +53,23 @@ class IndexProvider {
       // 获取用户自选股票
       const userStocks = getStocks();
 
-      const [indexData, sectorData, userData] = await Promise.all([
-        getStockList(indexCodes),
-        getStockList(sectorCodes),
-        getStockList(userStocks),
-      ]);
+      // 合并所有代码并去重,一次请求获取全部数据
+      const allCodes = [
+        ...new Set([...indexCodes, ...sectorCodes, ...userStocks]),
+      ];
+      const allData = await getStockList(allCodes);
 
       const sortByChange = (a, b) =>
         parseFloat(b.changePercent) - parseFloat(a.changePercent);
 
       this._stockData = {
-        indices: indexData,
-        sectors: sectorData.sort(sortByChange),
-        stocks: userData.sort(sortByChange),
+        indices: allData.filter((stock) => indexCodes.includes(stock.code)),
+        sectors: allData
+          .filter((stock) => sectorCodes.includes(stock.code))
+          .sort(sortByChange),
+        stocks: allData
+          .filter((stock) => userStocks.includes(stock.code))
+          .sort(sortByChange),
       };
 
       this._onDidChangeTreeData.fire();
