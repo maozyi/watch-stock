@@ -99,16 +99,8 @@ class StockManager {
     // 获取股票名称用于显示
     const stockInfos = await getStockList(stocks);
 
-    // 创建代码到信息的映射
-    const infoMap = new Map();
-    stockInfos.forEach((info) => {
-      if (info && info.code) {
-        infoMap.set(info.code.toLowerCase(), info);
-      }
-    });
-
     const stockOptions = stocks.map((code) => {
-      const info = infoMap.get(code.toLowerCase());
+      const info = stockInfos.find((s) => s && s.code === code);
       return {
         label: info ? `${info.name}(${info.code})` : code,
         description: "点击移除",

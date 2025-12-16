@@ -35,9 +35,6 @@ async function getStockList(codes) {
     const data = simpleDecode(response.data);
     const lines = data.split("\n");
 
-    // 创建代码映射，用于匹配返回的数据
-    const codeMap = new Map(codes.map((code) => [code.toLowerCase(), code]));
-
     const results = [];
     for (const line of lines) {
       const trimmed = line.trim();
@@ -46,11 +43,10 @@ async function getStockList(codes) {
       // 匹配格式：var hq_str_sh600519="..."
       const match = trimmed.match(/var hq_str_([^=]+)="([^"]+)"/);
       if (match && match[1] && match[2]) {
-        const returnedCode = match[1].toLowerCase();
-        // 查找对应的请求代码
-        const requestedCode = codeMap.get(returnedCode);
-        if (requestedCode) {
-          const stockInfo = parseStockData(requestedCode, match[2]);
+        const code = match[1].toLowerCase();
+        // 验证是否为请求的股票代码
+        if (codes.includes(code)) {
+          const stockInfo = parseStockData(code, match[2]);
           if (stockInfo) {
             results.push(stockInfo);
           }
