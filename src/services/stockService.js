@@ -45,7 +45,6 @@ async function getStockList(codes) {
   } catch (error) {
     const errorMsg = `获取股票数据失败: ${error.message}`;
     console.error(errorMsg);
-    vscode.window.showErrorMessage(errorMsg);
     return [];
   }
 }
@@ -58,14 +57,21 @@ async function getStockList(codes) {
  */
 function parseStockData(code, data) {
   const parts = data.split(",");
-  if (parts.length < 10) return null;
+  if (parts.length < 32) return null;
   const name = parts[0]?.trim() || "";
   const close = parseFloat(parts[2]) || 0;
   const current = parseFloat(parts[3]) || 0;
   const amount = parseFloat(parts[9]) || 0;
 
   // 数据验证
-  if (!name || close <= 0 || current <= 0 || amount <= 0) {
+  if (
+    !name ||
+    close <= 0 ||
+    current <= 0 ||
+    amount <= 0 ||
+    !parts[30] ||
+    !parts[31]
+  ) {
     return null;
   }
 
@@ -78,9 +84,10 @@ function parseStockData(code, data) {
     name.includes("ETF") ||
     (current < 3 && (name.includes("基金") || name.includes("指数")));
   const decimals = isETF ? 3 : 2;
+  const dateTime = `${parts[30]} ${parts[31]}`;
 
   return {
-    name: name.trim(),
+    name,
     code,
     current: current.toFixed(decimals),
     change: change.toFixed(decimals),
@@ -89,6 +96,7 @@ function parseStockData(code, data) {
     isUp: change >= 0,
     market: code.substring(0, 2),
     isETF,
+    dateTime,
   };
 }
 
