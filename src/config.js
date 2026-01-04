@@ -54,6 +54,15 @@ function getShowTwoLetterCode() {
 }
 
 /**
+ * 是否开启自选股票异动监控
+ * @returns {boolean}
+ */
+function getEnableMonitor() {
+  const config = getConfig();
+  return config.get("enableMonitor", true);
+}
+
+/**
  * 获取指数代码列表
  * @returns {string[]} 指数代码数组
  */
@@ -91,6 +100,7 @@ module.exports = {
   saveStocks,
   getMaxDisplayCount,
   getShowTwoLetterCode,
+  getEnableMonitor,
   getIndices,
   getSectors,
 };
