@@ -59,7 +59,7 @@ function getShowTwoLetterCode() {
  */
 function getEnableMonitor() {
   const config = getConfig();
-  return config.get("enableMonitor", true);
+  return config.get("enableMonitor", false);
 }
 
 /**

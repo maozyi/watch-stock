@@ -132,7 +132,7 @@
         },
         "watch-stock.enableMonitor": {
           "type": "boolean",
-          "default": true,
+          "default": false,
           "description": "是否开启自选股票异动监控"
         }
       }

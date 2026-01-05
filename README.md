@@ -50,7 +50,7 @@
 | `watch-stock.sectors`           | array   | `[...]`        | 板块代码列表(在股票看板中显示) |
 | `watch-stock.maxDisplayCount`   | number  | `5`            | 状态栏最大显示股票数量         |
 | `watch-stock.showTwoLetterCode` | boolean | `false`        | 状态栏是否显示 2 位简称        |
-| `watch-stock.enableMonitor`     | boolean | `true`         | 是否开启自选股票异动监控       |
+| `watch-stock.enableMonitor`     | boolean | `false`        | 是否开启自选股票异动监控       |
 
 ### 配置示例
 
