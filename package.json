@@ -1,9 +1,9 @@
 {
-  "name": "watch-stock",
-  "displayName": "摸鱼看盘",
+  "name": "codetrader",
+  "displayName": "CodeTrader",
   "icon": "images/logo.jpg",
-  "description": "极简股票查看插件，编码的同时轻松掌握股市动态",
-  "version": "1.3.0",
+  "description": "CodeTrader - 专业的VS Code股票实时监控插件",
+  "version": "1.4.0",
   "publisher": "pbstar",
   "engines": {
     "vscode": "^1.74.0"
@@ -21,7 +21,7 @@
       "activitybar": [
         {
           "id": "watchStock",
-          "title": "摸鱼看盘",
+          "title": "CodeTrader",
           "icon": "$(graph)"
         }
       ]
@@ -37,35 +37,35 @@
     },
     "commands": [
       {
-        "command": "watch-stock.addStock",
+        "command": "codetrader.addStock",
         "title": "添加自选股票"
       },
       {
-        "command": "watch-stock.removeStock",
+        "command": "codetrader.removeStock",
         "title": "移除自选股票"
       },
       {
-        "command": "watch-stock.clearStocks",
+        "command": "codetrader.clearStocks",
         "title": "清空自选股票"
       },
       {
-        "command": "watch-stock.manageStock",
+        "command": "codetrader.manageStock",
         "title": "管理股票",
         "icon": "$(gear)"
       },
       {
-        "command": "watch-stock.toggleVisibility",
+        "command": "codetrader.toggleVisibility",
         "title": "显示/隐藏状态栏"
       },
       {
-        "command": "watch-stock.refreshData",
+        "command": "codetrader.refreshData",
         "title": "刷新行情数据"
       }
     ],
     "configuration": {
-      "title": "摸鱼看盘",
+      "title": "CodeTrader",
       "properties": {
-        "watch-stock.stocks": {
+        "codetrader.stocks": {
           "type": "array",
           "default": [
             "sh000001"
@@ -75,7 +75,7 @@
             "type": "string"
           }
         },
-        "watch-stock.indices": {
+        "codetrader.indices": {
           "type": "array",
           "default": [
             "sh000001",
@@ -89,7 +89,7 @@
             "type": "string"
           }
         },
-        "watch-stock.sectors": {
+        "codetrader.sectors": {
           "type": "array",
           "default": [
             "sh515880",
@@ -120,17 +120,17 @@
             "type": "string"
           }
         },
-        "watch-stock.maxDisplayCount": {
+        "codetrader.maxDisplayCount": {
           "type": "number",
           "default": 5,
           "description": "状态栏最大显示股票数量"
         },
-        "watch-stock.showTwoLetterCode": {
+        "codetrader.showTwoLetterCode": {
           "type": "boolean",
           "default": false,
           "description": "状态栏是否显示2位简称"
         },
-        "watch-stock.enableMonitor": {
+        "codetrader.enableMonitor": {
           "type": "boolean",
           "default": false,
           "description": "是否开启自选股票异动监控"
@@ -139,7 +139,7 @@
     },
     "keybindings": [
       {
-        "command": "watch-stock.toggleVisibility",
+        "command": "codetrader.toggleVisibility",
         "key": "ctrl+alt+s",
         "mac": "cmd+alt+s",
         "when": "editorTextFocus || !editorTextFocus"
@@ -148,7 +148,7 @@
     "menus": {
       "view/title": [
         {
-          "command": "watch-stock.manageStock",
+          "command": "codetrader.manageStock",
           "when": "view == watchStockIndex",
           "group": "navigation"
         }
@@ -157,7 +157,7 @@
   },
   "dependencies": {},
   "keywords": [
-    "摸鱼看盘",
+    "CodeTrader",
     "stock",
     "股票",
     "行情",

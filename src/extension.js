@@ -1,5 +1,5 @@
 /**
- * 摸鱼看盘 - VS Code股票实时查看插件
+ * CodeTrader - VS Code股票实时查看插件
  */
 
 const vscode = require("vscode");
@@ -19,7 +19,7 @@ let indexProvider;
  * 插件激活函数
  */
 function activate(context) {
-  console.log("摸鱼看盘插件已启动");
+  console.log("CodeTrader插件已启动");
 
   // 初始化管理器
   statusBarManager = new StatusBarManager();
@@ -71,7 +71,7 @@ function activate(context) {
 function registerCommands(context) {
   // 添加自选股票
   const addStockCommand = vscode.commands.registerCommand(
-    "watch-stock.addStock",
+    "codetrader.addStock",
     () =>
       stockManager.addStock(() => {
         statusBarManager.updateData();
@@ -81,7 +81,7 @@ function registerCommands(context) {
 
   // 移除自选股票
   const removeStockCommand = vscode.commands.registerCommand(
-    "watch-stock.removeStock",
+    "codetrader.removeStock",
     () =>
       stockManager.removeStock(() => {
         statusBarManager.updateData();
@@ -91,7 +91,7 @@ function registerCommands(context) {
 
   // 清空自选股票
   const clearStocksCommand = vscode.commands.registerCommand(
-    "watch-stock.clearStocks",
+    "codetrader.clearStocks",
     () =>
       stockManager.clearStocks(() => {
         statusBarManager.updateData();
@@ -101,7 +101,7 @@ function registerCommands(context) {
 
   // 管理股票（主菜单）
   const manageStockCommand = vscode.commands.registerCommand(
-    "watch-stock.manageStock",
+    "codetrader.manageStock",
     async () => {
       const stocks = getStocks();
       const isVisible = statusBarManager.getIsVisible();
@@ -153,19 +153,19 @@ function registerCommands(context) {
 
       switch (selected.action) {
         case "add":
-          await vscode.commands.executeCommand("watch-stock.addStock");
+          await vscode.commands.executeCommand("codetrader.addStock");
           break;
         case "remove":
-          await vscode.commands.executeCommand("watch-stock.removeStock");
+          await vscode.commands.executeCommand("codetrader.removeStock");
           break;
         case "clear":
-          await vscode.commands.executeCommand("watch-stock.clearStocks");
+          await vscode.commands.executeCommand("codetrader.clearStocks");
           break;
         case "toggle":
-          await vscode.commands.executeCommand("watch-stock.toggleVisibility");
+          await vscode.commands.executeCommand("codetrader.toggleVisibility");
           break;
         case "refresh":
-          await vscode.commands.executeCommand("watch-stock.refreshData");
+          await vscode.commands.executeCommand("codetrader.refreshData");
           break;
       }
     }
@@ -173,7 +173,7 @@ function registerCommands(context) {
 
   // 切换显示/隐藏
   const toggleVisibilityCommand = vscode.commands.registerCommand(
-    "watch-stock.toggleVisibility",
+    "codetrader.toggleVisibility",
     () => {
       statusBarManager.toggleVisibility();
     }
@@ -181,7 +181,7 @@ function registerCommands(context) {
 
   // 刷新行情数据
   const refreshDataCommand = vscode.commands.registerCommand(
-    "watch-stock.refreshData",
+    "codetrader.refreshData",
     async () => {
       await statusBarManager.updateData();
       await indexProvider.updateData();

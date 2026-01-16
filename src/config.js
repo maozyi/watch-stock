@@ -5,7 +5,7 @@
 const vscode = require("vscode");
 const { isValidStockCode } = require("./utils/stockCode");
 
-const CONFIG_SECTION = "watch-stock";
+const CONFIG_SECTION = "codetrader";
 
 /**
  * 获取配置对象

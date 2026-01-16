@@ -1,4 +1,4 @@
-# 🚀 摸鱼看盘 VS Code 插件
+# 🚀 CodeTrader VS Code 插件
 
 一个轻量极简的 VS Code 股票实时查看插件，让您在编码的同时轻松掌握股市动态。
 
@@ -14,14 +14,14 @@
 
 ### 安装插件
 
-1. **从插件市场安装**：在 VS Code 插件市场搜索 `摸鱼看盘`/`watch-stock` 并安装
+1. **从插件市场安装**：在 VS Code 插件市场搜索 `CodeTrader`/`watch-stock` 并安装
 2. **从 VSIX 安装**：
    - 在 [GitHub Releases](https://github.com/pbstar/watch-stock/releases) 下载最新的 `watch-stock-*.vsix` 文件
    - 在 VS Code 中点击"扩展"图标，选择"从 VSIX 安装"，选择下载的插件包
 
 ### 使用步骤
 
-1. **查看股票看板**：点击活动栏的"摸鱼看盘"图标，打开侧边栏查看指数、板块和自选股
+1. **查看股票看板**：点击活动栏的"CodeTrader"图标，打开侧边栏查看指数、板块和自选股
 2. **添加自选股**：点击状态栏或侧边栏齿轮图标，选择"添加自选股票"，输入股票代码或名称
 3. **管理股票**：点击状态栏或侧边栏齿轮图标，可添加、移除、清空自选股票列表
 4. **显示/隐藏**：
@@ -41,23 +41,23 @@
 
 | 配置项                          | 类型    | 默认值         | 说明                           |
 | ------------------------------- | ------- | -------------- | ------------------------------ |
-| `watch-stock.stocks`            | array   | `["sh000001"]` | 自选股票代码表                 |
-| `watch-stock.indices`           | array   | `[...]`        | 指数代码列表(在股票看板中显示) |
-| `watch-stock.sectors`           | array   | `[...]`        | 板块代码列表(在股票看板中显示) |
-| `watch-stock.maxDisplayCount`   | number  | `5`            | 状态栏最大显示股票数量         |
-| `watch-stock.showTwoLetterCode` | boolean | `false`        | 状态栏是否显示 2 位简称        |
-| `watch-stock.enableMonitor`     | boolean | `false`        | 是否开启自选股票异动监控       |
+| `codetrader.stocks`            | array   | `["sh000001"]` | 自选股票代码表                 |
+| `codetrader.indices`           | array   | `[...]`        | 指数代码列表(在股票看板中显示) |
+| `codetrader.sectors`           | array   | `[...]`        | 板块代码列表(在股票看板中显示) |
+| `codetrader.maxDisplayCount`   | number  | `5`            | 状态栏最大显示股票数量         |
+| `codetrader.showTwoLetterCode` | boolean | `false`        | 状态栏是否显示 2 位简称        |
+| `codetrader.enableMonitor`     | boolean | `false`        | 是否开启自选股票异动监控       |
 
 ### 配置示例
 
 ```json
 {
-  "watch-stock.stocks": ["sh600519", "sz000001", "sh601318"],
-  "watch-stock.indices": ["sh000001", "sz399001", "sz399006"],
-  "watch-stock.sectors": ["sh512760", "sh512690", "sh512170"],
-  "watch-stock.maxDisplayCount": 3,
-  "watch-stock.showTwoLetterCode": true,
-  "watch-stock.enableMonitor": true
+  "codetrader.stocks": ["sh600519", "sz000001", "sh601318"],
+  "codetrader.indices": ["sh000001", "sz399001", "sz399006"],
+  "codetrader.sectors": ["sh512760", "sh512690", "sh512170"],
+  "codetrader.maxDisplayCount": 3,
+  "codetrader.showTwoLetterCode": true,
+  "codetrader.enableMonitor": true
 }
 ```
 
@@ -77,7 +77,7 @@
 
 ### ❓ 状态栏股票名称太长怎么办？
 
-在 VS Code 设置中启用 `watch-stock.showTwoLetterCode`，状态栏将显示股票两位简称，悬停提示仍显示完整名称。
+在 VS Code 设置中启用 `codetrader.showTwoLetterCode`，状态栏将显示股票两位简称，悬停提示仍显示完整名称。
 
 **示例**：
 
@@ -94,7 +94,7 @@
 
 ```bash
 # 克隆项目
-git clone https://github.com/pbstar/watch-stock.git
+git clone https://github.com/pbstar/codetrader.git
 cd watch-stock
 
 # 使用 VS Code 打开项目
