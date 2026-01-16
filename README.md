@@ -35,7 +35,7 @@
 
 > **注意**：本插件未发布到 VS Code 插件市场，需要通过源码构建安装。
 
-### 方式一：快速安装（推荐）
+### 快速安装（推荐）
 
 ```bash
 # 1. 克隆项目
@@ -45,14 +45,14 @@ cd codetrader
 # 2. 安装打包工具
 npm install -g @vscode/vsce
 
-# 3. 自动构建并安装（使用便捷脚本）
-./scripts/rebuild.sh
+# 3. 自动构建并安装
+npm run rebuild
 
 # 4. 重新加载 VSCode 窗口
 # 按 Ctrl+Shift+P → 输入 "Reload Window" → 回车
 ```
 
-### 方式二：手动安装
+### 手动安装
 
 ```bash
 # 1. 克隆项目
@@ -63,7 +63,7 @@ cd codetrader
 npm install -g @vscode/vsce
 
 # 3. 打包插件
-vsce package
+npm run package
 
 # 4. 安装到 VSCode
 code --install-extension codetrader-1.4.0.vsix
@@ -132,7 +132,7 @@ cd codetrader
 # 按 F5 启动调试模式（会打开新窗口测试插件）
 
 # 或快速重新编译并安装到当前 VSCode
-./scripts/rebuild.sh
+npm run rebuild
 ```
 
 ### 开发工作流
@@ -142,7 +142,7 @@ cd codetrader
 vim src/managers/stockManager.js
 
 # 2. 重新编译并安装
-./scripts/rebuild.sh
+npm run rebuild
 
 # 3. 重新加载 VSCode 窗口
 # 按 Ctrl+Shift+P → 输入 "Reload Window" → 回车
@@ -150,7 +150,7 @@ vim src/managers/stockManager.js
 # 4. 测试功能
 ```
 
-详细的开发脚本使用说明请查看 [scripts/README.md](scripts/README.md)。
+更多开发脚本说明请查看 [scripts/README.md](scripts/README.md)。
 
 ### 本地打包
 
@@ -159,9 +159,6 @@ vim src/managers/stockManager.js
 npm install -g @vscode/vsce
 
 # 打包插件
-vsce package
-
-# 或使用便捷脚本
 npm run package
 ```
 
