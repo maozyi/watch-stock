@@ -102,36 +102,67 @@ class StockManager {
   }
 
   /**
-   * 移除股票
+   * 移除股票（支持连续移除）
    * @param {Function} onUpdate - 更新回调函数
    */
   async removeStock(onUpdate) {
-    const stocks = getStocks();
+    let stocks = getStocks();
     if (stocks.length === 0) {
       vscode.window.showInformationMessage("当前没有添加任何股票");
       return;
     }
 
-    // 获取股票名称用于显示
-    const stockInfos = await getStockList(stocks);
+    let removedCount = 0;
+    const totalCount = stocks.length;
 
-    const stockOptions = stocks.map((code) => {
-      const info = stockInfos.find((s) => s && s.code === code);
-      return {
-        label: info ? `${info.name}(${info.code})` : code,
-        description: "点击移除",
-        code: code,
-      };
-    });
+    while (true) {
+      // 重新获取最新的股票列表
+      stocks = getStocks();
+      
+      if (stocks.length === 0) {
+        vscode.window.showInformationMessage(
+          `已移除所有股票！共移除了 ${removedCount} 只`
+        );
+        break;
+      }
 
-    const selected = await vscode.window.showQuickPick(stockOptions, {
-      placeHolder: "选择要移除的股票",
-    });
+      // 获取股票名称用于显示
+      const stockInfos = await getStockList(stocks);
 
-    if (selected) {
+      const stockOptions = stocks.map((code) => {
+        const info = stockInfos.find((s) => s && s.code === code);
+        return {
+          label: info ? `${info.name}(${info.code})` : code,
+          description: "点击移除",
+          code: code,
+        };
+      });
+
+      const placeHolder = removedCount > 0
+        ? `已移除 ${removedCount}/${totalCount} 只股票，继续选择或按 ESC 退出`
+        : `选择要移除的股票（共 ${stocks.length} 只，按 ESC 退出）`;
+
+      const selected = await vscode.window.showQuickPick(stockOptions, {
+        placeHolder: placeHolder,
+      });
+
+      // 用户按 ESC 退出
+      if (!selected) {
+        if (removedCount > 0) {
+          vscode.window.showInformationMessage(
+            `移除完成！共移除了 ${removedCount} 只股票`
+          );
+        }
+        break;
+      }
+
+      // 移除选中的股票
       const newStocks = stocks.filter((s) => s !== selected.code);
       await saveStocks(newStocks);
-      vscode.window.showInformationMessage(`已移除: ${selected.label}`);
+      removedCount++;
+
+      // 移除成功的即时反馈
+      vscode.window.showInformationMessage(`✅ 已移除: ${selected.label}`);
 
       // 触发更新
       if (onUpdate) {
