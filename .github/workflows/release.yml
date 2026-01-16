@@ -18,11 +18,17 @@ jobs:
         with:
           node-version: '18'
 
+      - name: Install dependencies
+        run: npm install || echo "No dependencies to install"
+
       - name: Install vsce
         run: npm install -g @vscode/vsce
 
+      - name: Verify vsce installation
+        run: vsce --version
+
       - name: Package extension
-        run: vsce package
+        run: vsce package --no-yarn
 
       - name: Get version from tag
         id: get_version
