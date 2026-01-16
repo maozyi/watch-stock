@@ -16,19 +16,10 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-
-      - name: Install dependencies
-        run: npm install || echo "No dependencies to install"
-
-      - name: Install vsce
-        run: npm install -g @vscode/vsce
-
-      - name: Verify vsce installation
-        run: vsce --version
+          node-version: '20'
 
       - name: Package extension
-        run: vsce package --no-yarn
+        run: npx --yes @vscode/vsce package
 
       - name: Get version from tag
         id: get_version
