@@ -1,0 +1,58 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install vsce
+        run: npm install -g @vscode/vsce
+
+      - name: Package extension
+        run: vsce package
+
+      - name: Get version from tag
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: '*.vsix'
+          body: |
+            ## 🚀 CodeTrader v${{ steps.get_version.outputs.VERSION }}
+            
+            ### 📦 安装方法
+            
+            1. 下载下方的 `codetrader-${{ steps.get_version.outputs.VERSION }}.vsix` 文件
+            2. 在 VSCode 中按 `Ctrl+Shift+P` 打开命令面板
+            3. 输入 `Extensions: Install from VSIX...`
+            4. 选择下载的 `.vsix` 文件
+            5. 重新加载窗口
+            
+            ### 🔧 命令行安装
+            
+            ```bash
+            code --install-extension codetrader-${{ steps.get_version.outputs.VERSION }}.vsix
+            ```
+            
+            ---
+            
+            详细更新内容请查看 [CHANGELOG](https://github.com/${{ github.repository }}/blob/main/CHANGELOG.md)
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
